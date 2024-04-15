@@ -1,0 +1,110 @@
+# PYTHON MODULES
+# import user-installed modules
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# pandas options
+pd.set_option('display.max_rows', 100)
+
+# use !wget -nc 'github path' to pull the nba stats data
+# player logs
+!wget "https://raw.githubusercontent.com/emilyychaee/ITP487_NBAStats_Chae/main/nba_game_log_2021_22.csv"
+nba_player_log = pd.read_csv('nba_game_log_2021_22.csv')
+# player salaries
+!wget "https://raw.githubusercontent.com/emilyychaee/ITP487_NBAStats_Chae/main/nba_salary_2021_22.csv"
+player_salaries_log = pd.read_csv('nba_salary_2021_22.csv')
+
+# view columns and null counts for each column in the data frames
+print(nba_player_log.columns)
+print(nba_player_log.info())
+print(player_salaries_log.columns)
+print(player_salaries_log.info())
+
+# shape of the data frames
+
+# player game log:
+print("NBA player log shape:")
+print(nba_player_log.shape)
+
+# player salaries
+print("NBA salary log shape:")
+print(player_salaries_log.shape)
+
+
+# show first five rows of each data frame
+
+# nba player log
+print(nba_player_log.head())
+print("\n")
+# player salaries
+print(player_salaries_log.head())
+print("\n")
+
+
+
+# clean player logs
+top_scorer_df = nba_player_log[['game_id', 'game_date','H_A', 'Team_Abbrev','Opponent_Abbrev','player', 'pts','minutes']]
+print(top_scorer_df.head())
+
+
+print("Player log data: ")
+print("Shape before dropping duplicates and unneeded columns: ")
+print(nba_player_log.shape)
+
+
+top_scorer_df = top_scorer_df.drop_duplicates()
+
+
+print("Shape after dropping duplicates and unneeded columns: ")
+print(top_scorer_df.shape)
+
+
+# clean player salary data
+
+top_earner_df = player_salaries_log[['Player', '2021/22']]
+print(top_earner_df.head())
+
+
+print("Player Salary log data: ")
+print("Shape before dropping duplicates and unneeded columns: ")
+print(player_salaries_log.shape)
+
+
+top_earner_df = top_earner_df.drop_duplicates()
+
+
+print("Shape after dropping duplicates and unneeded columns: ")
+print(top_earner_df.shape)
+
+
+# use pd.merge() to combine to two datasets, then clean the resulting data frame
+player_stats_salaries = pd.merge(top_scorer_df,top_earner_df,how='left',left_on='player',right_on='Player')
+
+
+print(nba_player_log.columns)
+print(nba_player_log.info())
+print(nba_player_log.shape)
+
+
+print(player_salaries_log.columns)
+print(player_salaries_log.info())
+
+
+# drop null rows with null values
+player_stats_salaries = player_stats_salaries.dropna(how='any')
+
+
+# rename columns
+player_stats_salaries = player_stats_salaries.rename(columns={"2021/22":"Salary", "H_A":"Home_Away"})
+
+print(nba_player_log.head())
+print("\n")
+
+
+print(player_salaries_log.head())
+print("\n")
+
+print(nba_player_log.shape)
+print(player_salaries_log.shape)
